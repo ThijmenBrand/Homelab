@@ -1,0 +1,5 @@
+*Ansible semaphore*
+
+**todo**
+
+- [] LDAP

@@ -1,0 +1,32 @@
+---
+
+- name: "Create admin user"
+  hosts: {{ vm_host }}
+  gather_facts: no
+  vars:
+    - username: thijmen
+    - ssh_pub: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCno5V012Yt+UrtJ2KDDndTQzMVhCVCrFkgix4Mzj1WoDQSrfrtryn3ddL8iyISOwUNso3JLi22izAS7EjCY6jR67wx+3f5TL0bqZwmxj4g5eYciH7JAkW7BRPzWZTM14z3+WMGFKd74QhnX3VrwowyBCbSLHNw0IhERoQf/7vmHlPijvUmxEYnJ0H7AYxSFO+K0vry5wAHbOtqjdGyUvKehemN0RGMRguWlAQsF8BBpqKIwvdcaz0L6YR4ZqRTqoLNFH6MacoOW0AJXlxGWlQnlLTqRTatSIl9pVfaFEmhw0NGqfBy2wF3muUUnF55BtZlTTFyetEpvddibS3051zhqCCuu8LDyBIDBIPXj9gR9ptfjS3rHrboKWR3e8p5Q0jTd0i2jI1LcgB90SVLu5PixbzTjPGD+InWutG+tMdGIGj6Cc13Vu8W8apHzDgWcSODBZiY8xVrkmzaorpeUhJzvSFdRIxOgCknaoDIFY809AQQFh+Q6EA4DbmpaAh0SP4qDhrt6pfPW8L+a5QqLNLD4iJcC6x5dGBazz4s2kBbnnENVB12ciQr4ned2xUU9tjHQZsin6bnT7L1filD747n9w7aup9T999fISEsTahabhTeQQiq2WO8XdHzEvaSVm+GOkVJfRiSGt6aOn6pEJGMtXcLTfTNxqdnpuAOQd2a8Q==
+  
+  tasks:
+    - name: "Create thijmen user"
+      ansible.builtin.user:
+        name: "{{ username }}"
+        comment: "ansible created admin user"
+        shell: /bin/bash
+        groups: admin, sudo
+        append: yes
+        create_home: yes
+
+    - name: "Add ssh public key"
+      ansible.posix.authorized_key:
+        user: "{{ username }}"
+        state: present
+        key: "{{ ssh_pub }}"
+
+    - name: "give passwordless sudo"
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/80-ansible-sudo-user
+        content: "{{ username }} ALL=(ALL) NOPASSWD:ALL"
+        mode: 0440
+
+

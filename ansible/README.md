@@ -51,3 +51,4 @@ rm <image-name>
 ```
 
 a bash shell file can be found in [cloud-init template]("cloud-init template/create-cloud-init-template.sh")
+hmm

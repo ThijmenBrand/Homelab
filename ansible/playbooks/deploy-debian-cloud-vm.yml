@@ -1,0 +1,100 @@
+---
+# create-cloud-vm.yml
+
+- name: "Deploy our Cloud-init VMs"
+  hosts: proxmox
+  vars:
+    ansible_username: ansible
+    ansible_password: jszMEjzj6cNA39YQCt9Z
+    ansible_ssh: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICOuTWj8mwubtdbDnekxI1ndELMDYphBNBOYXbqMU5fH
+    api_user: ansible_user@pam
+    api_token_id: ansible_user_api_key
+    api_token_secret: de23bd38-6540-4406-83e4-2736ee12711c
+    api_host: 192.168.128.200
+
+  tasks:
+    - name: Clone cloud-init template
+      community.general.proxmox_kvm:
+        proxmox_default_behavior: no_defaults
+
+        api_user: "{{ api_user }}"
+        api_token_id: "{{ api_token_id }}"
+        api_token_secret: "{{ api_token_secret }}"
+        api_host: "{{ api_host }}"
+
+        ostype: l26
+        bootdisk: scsi0
+        serial:
+          serial0: socket
+        vga: serial0
+
+        node: thijmen-homecluster
+        full: yes
+        state: present
+        clone: debian-11-template
+
+        name: "{{ vm_name }}"
+        cores: "{{ vm_cpu_cores | default(2) }}"
+        memory: "{{ vm_memory | default(2048) }}"
+        net:
+          net0: "virtio,bridge=vmbr0"
+
+      register: present_state
+
+    - name: Wait for deployment
+      ansible.builtin.wait_for:
+        timeout: 15
+      when: present_state.changed
+
+    - name: Update virtual machines
+      community.general.proxmox_kvm:
+        proxmox_default_behavior: no_defaults
+
+        api_user: "{{ api_user }}"
+        api_token_id: "{{ api_token_id }}"
+        api_token_secret: "{{ api_token_secret }}"
+        api_host: "{{ api_host }}"
+
+        node: thijmen-homecluster
+
+        name: "{{ vm_name }}"
+
+        ciuser: "{{ ansible_username }}}"
+        cipassword: "{{ ansible_password }}"
+        sshkeys: "{{ ansible_ssh }}"
+        ipconfig:
+          ipconfig0: "ip={{ ip_address | default(dhcp) }},gw=192.168.128.1"
+        nameservers:
+          - 8.8.8.8
+
+        scsi:
+          scsi0: local-zfs:32,format=raw
+
+        update: yes
+
+      register: update_state
+      when: present_state.changed
+
+    - name: Wait for update
+      ansible.builtin.wait_for:
+        timeout: 15
+      when: update_state.changed
+
+    - name: Start virtual machines
+      community.general.proxmox_kvm:
+        proxmox_default_behavior: no_defaults
+
+        api_user: "{{ api_user }}"
+        api_token_id: "{{ api_token_id }}"
+        api_token_secret: "{{ api_token_secret }}"
+        api_host: "{{ api_host }}"
+
+        name: "{{ vm_name }}"
+        state: started
+
+      register: started_state
+
+    - name: Wait for start
+      ansible.builtin.wait_for:
+        timeout: 15
+      when: started_state.changed

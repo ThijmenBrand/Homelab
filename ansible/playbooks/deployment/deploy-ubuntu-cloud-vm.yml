@@ -8,7 +8,7 @@
     ansible_password: jszMEjzj6cNA39YQCt9Z
     ansible_ssh: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICOuTWj8mwubtdbDnekxI1ndELMDYphBNBOYXbqMU5fH
     api_user: ansible@pam
-    api_token_id: ansible@pam!ansible_api_token
+    api_token_id: ansible_api_token
     api_token_secret: a1f2f70c-3a92-4013-8712-eeb3505e374e
     api_host: 192.168.128.200
 

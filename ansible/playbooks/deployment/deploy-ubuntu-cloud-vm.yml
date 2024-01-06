@@ -30,6 +30,7 @@
 
         node: thijmen-homecluster
         clone: ubuntu-2204-template
+        vmid: 9000
         full: yes
         state: present
 

@@ -39,7 +39,7 @@
     - name: Create new zabbix config file from template
       become: yes
       template:
-        src: "zabbix_agent2.conf"
+        src: "files/zabbix_agent2.conf"
         dest: "/etc/zabbix/zabbix_agent2.conf"
 
     - name: Start service zabbix-agent

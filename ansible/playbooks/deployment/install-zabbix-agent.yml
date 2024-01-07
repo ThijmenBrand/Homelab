@@ -6,7 +6,7 @@
   
     - name: Download zabbix repo package
       get_url:
-        url: "wget https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.0-4+ubuntu22.04_all.deb"
+        url: "https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.0-4+ubuntu22.04_all.deb"
         dest: /tmp/zabbix.deb
     
     - name: Install zabbix repo

@@ -1,6 +1,7 @@
 ---
 
 - name: Install Zabbix agent
+  hosts: "{{ host }}"
   tasks:
   
     - name: Download zabbix repo package

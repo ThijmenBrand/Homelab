@@ -39,6 +39,9 @@ The password need to have a minimal of 15 characters with at least 2 upper and 2
 ```
 3. restart docker container with `sudo docker restart <container id>`
 
+## Zabbix
+
+
 # Errors
 
 ## Proxmox OpenID realm

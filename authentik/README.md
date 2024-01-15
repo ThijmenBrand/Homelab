@@ -10,6 +10,35 @@ The password expires every 365 days
 
 The password need to have a minimal of 15 characters with at least 2 upper and 2 lower case letters
 
+# Implementations
+## Ansible Semaphore
+**Provider**
+1. Create an OpenID provider for Semaphore
+2. set the `redirect_urls` to "https://<semaphore domain>/api/auth/oidc/authelia/redirect"
+3. select openid, profile and email scopes
+
+**Application**
+1. Create application
+2. Select Semaphore provider
+
+**Semaphore**
+1. Enter semaphore docker image with `sudo docker exec -it <container id> /bin/bash`
+2. place the following configuration in /etc/semaphore/config.json
+```json
+...
+"oidc_providers": {
+  “Authentik”: {
+    "display_name": "Authentik",
+    "provider_url": "https://auth.thijmenbrand.nl ",
+    "client_id": "semaphore",
+    "client_secret": "<secret>",
+    "redirect_url": "https://semaphore.thijmenbrand.nl/api/auth/oidc/authelia/redirect"
+    }
+}
+...
+```
+3. restart docker container with `sudo docker restart <container id>`
+
 # Errors
 
 ## Proxmox OpenID realm
